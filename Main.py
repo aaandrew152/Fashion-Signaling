@@ -100,8 +100,9 @@ def get_low_payoff(low_strategy, low_receiver_population, high_receiver_populati
         if high_receiver[temp_strat] == 1:
             high_acceptances += 1
             
-    payoff = (low_accepted_payoff[0]*low_acceptances)/(len(low_receiver_population))
-    payoff += (low_accepted_payoff[1]*high_acceptances)/(len(high_receiver_population))
+    payoff = low_accepted_payoff[0]*low_acceptances
+    payoff += low_accepted_payoff[1]*high_acceptances
+    payoff /= size
     payoff -= cost
     
     return payoff
@@ -134,8 +135,9 @@ def get_high_payoff(high_strategy, low_receiver_population, high_receiver_popula
         if high_receiver[temp_strat] == 1:
             high_acceptances += 1
             
-    payoff = (high_accepted_payoff[0]*low_acceptances)/(len(low_receiver_population))
-    payoff += (high_accepted_payoff[1]*high_acceptances)/(len(high_receiver_population))
+    payoff = high_accepted_payoff[0]*low_acceptances
+    payoff += high_accepted_payoff[1]*high_acceptances
+    payoff /= size
     payoff -= cost
     
     return payoff
