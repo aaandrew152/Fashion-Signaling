@@ -24,16 +24,16 @@ First we define several parameters we will need later.
 """
 r = random.Random()
 
-low_costs = [0, 3, 5]
-high_costs = [0, 1, 1]
+low_costs = [0, 0.9, 0.9]
+high_costs = [0, 0.9, 0.9]
 #Cost to send [no signal, signal, hidden signal]
 
 low_accepted_payoff = [1, 2]
-high_accepted_payoff = [-5, 5]
+high_accepted_payoff = [1, 10]
 #Payoffs of sender = [accepted by low receiver, high]
 
-low_receiver_payoff = [1, 2]
-high_receiver_payoff = [-5, 3]
+low_receiver_payoff = [-1, 2]
+high_receiver_payoff = [-1, 4]
 #Payoffs of receiver = [accept low sender, medium, high]
 
 low_receiver_cost = 10
@@ -44,8 +44,8 @@ high_sender_fraction = 1/5 #Fraction of high senders
 low_sender_fraction = 4/5
 assert high_sender_fraction+low_sender_fraction == 1
 
-high_receiver_fraction = 1/4
-low_receiver_fraction = 3/4
+high_receiver_fraction = 1/5
+low_receiver_fraction = 4/5
 assert high_receiver_fraction + low_receiver_fraction == 1
 
 selection_strength = 1
@@ -54,7 +54,7 @@ mu = 0.02 #Mutation probability
 size = 100 #Total number of senders (equal to number of receivers)
 #Disadvised to use sizes greater than 150
 
-time = 1000 #Total number of generations
+time = 500 #Total number of generations
 
 sender_strategies=[0, 1, 2]#0 = no signal, 1 = a normal signal, 2 = send but hide signal
 receiver_strategies = [ [0,0,0,0], [0,0,0,1], [0,0,1,0], [0,0,1,1], 
@@ -333,7 +333,7 @@ def simulate(size, time):
         else:
             populations[3].append(r.choice(receiver_strategies))
                 
-    for i in range(1, time):#Runs the simulation
+    for i in range(time):#Runs the simulation
         populations = update(populations)
     
     print ("These are the proportions of senders who send each strategy")    
