@@ -1,7 +1,7 @@
 """
 Wright Fisher Model for Fashion trends, modeled by costly signaling
 """
-
+#Assert assumptions, Graph simplexs, and stress tests
 #import from __future__ division
 import random
 import math
@@ -24,28 +24,28 @@ First we define several parameters we will need later.
 """
 r = random.Random()
 
-low_costs = [0, 0.9, 0.9]
-high_costs = [0, 0.9, 0.9]
+low_costs = [0, 1, 5]
+high_costs = [0, 1, 1]
 #Cost to send [no signal, signal, hidden signal]
 
-low_accepted_payoff = [1, 2]
-high_accepted_payoff = [1, 10]
+low_accepted_payoff = [4, 5]
+high_accepted_payoff = [-1, 10]
 #Payoffs of sender = [accepted by low receiver, high]
 
-low_receiver_payoff = [-1, 2]
-high_receiver_payoff = [-1, 4]
-#Payoffs of receiver = [accept low sender, medium, high]
+low_receiver_payoff = [-1, 5]
+high_receiver_payoff = [-5, 10]
+#Payoffs of receiver = [accept low sender, high]
 
 low_receiver_cost = 10
-high_receiver_cost = 1/2
+high_receiver_cost = 1
 #Costs of investment
 
 high_sender_fraction = 1/5 #Fraction of high senders
 low_sender_fraction = 4/5
-assert high_sender_fraction+low_sender_fraction == 1
+assert high_sender_fraction + low_sender_fraction == 1
 
-high_receiver_fraction = 1/5
-low_receiver_fraction = 4/5
+high_receiver_fraction = 2/5
+low_receiver_fraction = 3/5
 assert high_receiver_fraction + low_receiver_fraction == 1
 
 selection_strength = 1
@@ -54,7 +54,7 @@ mu = 0.02 #Mutation probability
 size = 100 #Total number of senders (equal to number of receivers)
 #Disadvised to use sizes greater than 150
 
-time = 500 #Total number of generations
+time = 3000 #Total number of generations
 
 sender_strategies=[0, 1, 2]#0 = no signal, 1 = a normal signal, 2 = send but hide signal
 receiver_strategies = [ [0,0,0,0], [0,0,0,1], [0,0,1,0], [0,0,1,1], 
@@ -171,6 +171,7 @@ def get_low_receiver_payoff(low_receiver_strategy, low_population, high_populati
             
     payoff =  low_acceptances * low_receiver_payoff[0]
     payoff += high_acceptances * low_receiver_payoff[1]
+    payoff /= size
     payoff -= low_receiver_cost if invest else 0
     
     return payoff
@@ -205,6 +206,7 @@ def get_high_receiver_payoff(high_receiver_strategy, low_population, high_popula
             
     payoff =  low_acceptances * high_receiver_payoff[0]
     payoff += high_acceptances * high_receiver_payoff[1]
+    payoff /= size
     payoff -= high_receiver_cost if invest else 0
     
     return payoff
