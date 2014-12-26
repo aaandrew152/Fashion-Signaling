@@ -5,6 +5,8 @@ Wright Fisher Model for Fashion trends, modeled by costly signaling
 #import from __future__ division
 import random
 import math
+import Graphing
+from matplotlib import pyplot
 
 """
 We consider 4 separate populations - one of low type senders, 
@@ -24,20 +26,20 @@ First we define several parameters we will need later.
 """
 r = random.Random()
 
-low_costs = [0, 1, 5]
-high_costs = [0, 1, 1]
+low_costs = [0, 2, 2]
+high_costs = [0, 2, 2]
 #Cost to send [no signal, signal, hidden signal]
 
-low_accepted_payoff = [4, 5]
-high_accepted_payoff = [-1, 10]
+low_accepted_payoff = [4, 4]
+high_accepted_payoff = [0, 10]
 #Payoffs of sender = [accepted by low receiver, high]
 
-low_receiver_payoff = [-1, 5]
+low_receiver_payoff = [0, 5]
 high_receiver_payoff = [-5, 10]
 #Payoffs of receiver = [accept low sender, high]
 
 low_receiver_cost = 10
-high_receiver_cost = 1
+high_receiver_cost = 0
 #Costs of investment
 
 high_sender_fraction = 1/5 #Fraction of high senders
@@ -49,7 +51,7 @@ low_receiver_fraction = 3/5
 assert high_receiver_fraction + low_receiver_fraction == 1
 
 selection_strength = 1
-mu = 0.02 #Mutation probability
+mu = 0.1 #Mutation probability
 
 size = 100 #Total number of senders (equal to number of receivers)
 #Disadvised to use sizes greater than 150
@@ -300,30 +302,21 @@ def update(populations):
                    
     return new_population
 
-def get_sender_portion(population, strategy):
-    num_senders = 0
-    for sender in population:
-        if sender == strategy:
-            num_senders += 1
-    portion = num_senders / len(population)
-    return portion
-
-def get_receiver_portion(population, strategy):
-    num_receivers = 0
-    for receiver in population:
-        if receiver[strategy] == 1:
-            num_receivers += 1
-    portion = num_receivers / len(population)
-    return portion
-
 def simulate(size, time):
     """
     Starts with a random initial population and updates for many time steps
     Input: population time, size, and mutation rate
     Output: pylab plots of population changes over time
     """
-    populations=[ [], [], [], [], [] ]
-        
+    populations=[ [], [], [], [] ]
+    history = [ [ [], [], [], ], 
+               [ [], [], [], ], 
+               [ [], [], [], [] ], 
+               [ [], [], [], [] ], 
+              ]
+            
+    plots = Graphing.prepare_plots()
+
     for i in range(size):
         if i < low_sender_fraction * size:
             populations[0].append(r.choice(sender_strategies))
@@ -337,17 +330,11 @@ def simulate(size, time):
                 
     for i in range(time):#Runs the simulation
         populations = update(populations)
+        Graphing.update_history(populations, history)
     
-    print ("These are the proportions of senders who send each strategy")    
-    for sender in range(2):#Outputs sender strategy proportions
-        for signal in range(3):
-            print ("Type: " + str(sender) + " Signal: " + str(signal) + " " + str(get_sender_portion(populations[sender], signal)))
+    Graphing.plotting(time, plots, history)
     
-    print ("These are the proportions of receivers who accept a strategy") 
-    #NOTE THESE VALUES DO NOT NEED TO SUM TO 1, a receiver may accept more than one strategy       
-    for receiver in range(2):#Outputs receiver strategy's
-        for signal in range(3):
-            print ("Type: " + str(receiver) + " Signal: " + str(signal) + " "+ str(get_receiver_portion(populations[receiver+2], signal)))
-        print ("Type: " + str(receiver) + " Invests: " + " "+ str(get_receiver_portion(populations[receiver+2], 3)))
-    
+    pyplot.show()
+       
+       
 simulate(size, time)
